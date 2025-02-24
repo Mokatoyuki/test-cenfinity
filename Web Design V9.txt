@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CENFINITY</title>
+  <style>
+    /* Global Styles */
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      margin: 0; 
+      padding: 0; 
+      /* ปรับจาก height: 100vh เป็น min-height หรือเอาออก */
+      /* height: 100vh;  <-- ลบทิ้ง */
+      min-height: 100vh; 
+      background: linear-gradient(-45deg, 
+        #000000 0%,
+        #0a0a0a 25%,
+        #111111 50%,
+        #151515 75%,
+        #000000 100%
+      );
+      background-size: 300% 300%;
+      animation: gradient 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      color: #333;
+      position: relative;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 0%;
+      }
+      25% {
+        background-position: 100% 0%;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      75% {
+        background-position: 0% 100%;
+      }
+      100% {
+        background-position: 0% 0%;
+      }
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 50px;
+      background-color: rgba(51, 51, 51, 0.9);
+      backdrop-filter: blur(5px);
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease-in-out;
+    }
+    .navbar.scrolled {
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+    }
+    .navbar-logo img {
+      width: 180px;
+      height: auto;
+      transition: transform 0.3s ease-in-out;
+    }
+    .navbar-logo img:hover,
+    .navbar-logo img:focus {
+      transform: scale(1.1);
+    }
+    .nav-menu {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .nav-item {
+      padding: 0 10px;
+      position: relative;
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 12px;
+      font-weight: normal;
+      transition: all 0.2s ease;
+      font-size: clamp(12px, 2vw, 14px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-link:hover {
+      color: #e50019;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    .nav-item a:focus,
+    .nav-item a:active,
+    .nav-link:focus,
+    .nav-link:active {
+      outline: none;
+      background: transparent;
+      color: white;
+      font-weight: 500;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: rgba(51, 51, 51, 0.9);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 2001;
+      list-style: none;
+    }
+    .nav-item:hover .dropdown-menu {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
+    .dropdown-item a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 10px 15px;
+      font-weight: normal;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dropdown-item a:hover {
+      color: #e50019;
+      background: transparent;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Navbar Search */
+    .navbar-search {
+      position: absolute;
+      right: 10%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .search-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 20px;
+    }
+    .search-input {
+      width: 0;
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      border: none;
+      outline: none;
+      background-color: transparent;
+      color: black;
+      padding: 5px;
+      border-radius: 0;
+      transition: width 0.5s ease, opacity 0.5s ease, background-color 0.5s ease;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .navbar-search.active .search-input {
+      width: 200px;
+      opacity: 1;
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+
+    /* Hero Section */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  margin-top: 0;  /* ไม่ดึงขึ้นด้วย margin ลบ */
+}
+canvas#backgroundCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100vh; /* ถ้าต้องการเต็มจอ */
+      overflow: hidden;
+    }
+    #hero-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 56.25vw; /* 16:9 aspect ratio */
+      min-height: 100vh;
+      min-width: 177.78vh;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .overlay .logo {
+      width: 600px;
+      max-width: 80%;
+    }
+
+/* Hero Banner Fixes */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  margin-top: 0;
+  z-index: 1;
+}
+.hero-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+    .hero-item.active {
+      opacity: 1;
+    }
+    .hero-content {
+      position: absolute;
+      bottom: 20%;
+      left: 10%;
+      color: white;
+      max-width: 40%;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 3;
+    }
+    .hero-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    .hero-content p {
+      font-size: 1.2rem;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      z-index: 4;
+    }
+    .arrow.left {
+      left: 10px;
+    }
+    .arrow.right {
+      right: 10px;
+    }
+    .dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 4;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .dot.active {
+      background: white;
+    }
+
+    /* Section Title */
+    .section {
+      max-width: 1600px;
+      margin: auto;
+      padding: 50px 20px;
+      text-align: center;
+    }
+    .section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #fff;
+    }
+
+    /* Upcoming Events (Immersive Gallery) */
+    .immersive-gallery {
+      display: flex;
+      width: 100%;
+      /* height: 90vh;  <-- ลบหรือคอมเมนต์ออก */
+      min-height: 90vh; /* ถ้าต้องการสูงอย่างน้อย 90% ของ viewport */
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: #0a0a0a;
+    }
+    .gallery-panel {
+      position: relative;
+      flex: 1;
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      border-radius: 2rem;
+      display: flex;
+    }
+    .panel-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .floating-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .float-circle {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      animation: floatCircle 8s infinite ease-in-out;
+    }
+    .float-line {
+      position: absolute;
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: floatLine 6s infinite ease-in-out;
+    }
+    .vertical-label {
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 2;
+    }
+    .label-line {
+      width: 1px;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, white, transparent);
+    }
+    .vertical-label span {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      color: white;
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      transform: rotate(-180deg);
+    }
+    .label-dot {
+      width: 6px;
+      height: 6px;
+      background: #FFB800;
+      border-radius: 50%;
+      margin-top: 0.5rem;
+    }
+    .panel-content {
+      position: relative;
+      width: 100%;
+      padding: 3rem;
+      background: linear-gradient(to left, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.8));
+      color: white;
+      opacity: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transform: translateX(100%);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .content-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .section-number {
+      font-size: 4rem;
+      font-weight: 200;
+      color: rgba(255, 184, 0, 0.3);
+    }
+    .content-header h2 {
+      font-size: 2.5rem;
+      color: #FFB800;
+      margin: 0;
+    }
+    .feature-list {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.1rem;
+    }
+    .feature-icon {
+      color: #FFB800;
+    }
+.interaction-hint {
+  position: absolute;
+  bottom: 1.5rem;  /* ลดระยะห่างจากด้านล่าง */
+  right: 2rem;     /* ลดระยะห่างจากด้านขวา */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;     /* ลดระยะห่างระหว่าง text กับ arrow */
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.6s ease;
+  z-index: 10;
+  cursor: pointer;
+  padding: 6px 12px;  /* ลดขนาด padding */
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;  /* ลดความโค้งมนของขอบ */
+}
+.gallery-panel:hover .interaction-hint {
+  opacity: 1;
+  transform: translateX(0);
+}
+.hint-text {
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;  /* ลดระยะห่างระหว่างตัวอักษร */
+  font-size: 0.75rem;   /* ลดขนาดตัวอักษร */
+  user-select: none;
+}
+.hint-arrow {
+  width: 30px;
+  height: 2px;
+  background: white;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+.hint-arrow::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 6px;     /* ลดขนาดหัวลูกศร */
+  height: 6px;    /* ลดขนาดหัวลูกศร */
+  border-top: 1.5px solid white;    /* ลดความหนาของเส้นขอบ */
+  border-right: 1.5px solid white;  /* ลดความหนาของเส้นขอบ */
+}
+.interaction-hint:hover .hint-arrow {
+  transform: translateX(5px);
+}
+.interaction-hint:hover {
+  background: rgba(0, 0, 0, 0.4);
+  transform: translateX(0) scale(1.03);  /* ลดการขยายตัวเมื่อ hover */
+}
+
+.interaction-hint:active {
+  transform: translateX(0) scale(0.98);
+}
+
+    .gallery-panel:hover {
+      flex: 2.5;
+    }
+    .gallery-panel:hover .panel-content {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .gallery-panel:hover .panel-image {
+      filter: brightness(0.3);
+    }
+    .gallery-panel:hover .floating-elements {
+      opacity: 1;
+    }
+    @keyframes floatCircle {
+      0%, 100% { transform: translate(20%, 20%); }
+      50% { transform: translate(30%, 30%); }
+    }
+    @keyframes floatLine {
+      0%, 100% { transform: translate(10%, 10%) rotate(45deg); }
+      50% { transform: translate(20%, 20%) rotate(45deg); }
+    }
+    @keyframes arrowPulse {
+      0%, 100% { transform: scaleX(1); }
+      50% { transform: scaleX(1.2); }
+    }
+
+    /* Privileges Cards */
+    .content {
+      max-width: 1600px;
+      margin: auto;
+      padding: 50px;
+    }
+    .wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 110px;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .card {
+      width: 250px;
+      height: 200px;
+      perspective: 2000px;
+      cursor: pointer;
+    }
+    .card .content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.75, 0, 0.85, 1);
+    }
+    .card.flipped .content {
+      transform: rotateY(180deg);
+    }
+    .front, .back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      border-radius: 6px;
+    }
+    .front {
+      background-color: #fff;
+      background-size: cover;
+      background-position: center;
+    }
+    .front:after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: block;
+      border-radius: 6px;
+      background: linear-gradient(40deg, rgba(67, 138, 243, 0.7), rgba(255, 242, 166, 0.7));
+    }
+    .front .inner {
+      height: 100%;
+      display: grid;
+      padding: 1em;
+      transform: translateZ(60px) scale(0.94);
+      grid-template-rows: 5fr 1fr 1fr 2fr 1fr;
+      justify-items: center;
+    }
+    .front h2 {
+      grid-row: 2;
+      margin-bottom: 0.3em;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #fff;
+      font-weight: 500;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+      font-size: 1.2em;
+    }
+    .front .rating {
+      grid-row: 3;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      display: flex;
+      flex-flow: row nowrap;
+    }
+    .back {
+      transform: rotateY(180deg);
+      background-color: #fff;
+      border: 2px solid rgb(240, 240, 240);
+    }
+    .back .inner {
+      height: 100%;
+      display: grid;
+      padding: 1.5em;
+      transform: translateZ(60px) scale(0.94);
+      grid-template-rows: 1fr 4fr 1fr;
+    }
+    .back .description {
+      grid-row: 2;
+      font-size: 0.86em;
+      line-height: 1.4em;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    .back .location,
+    .back .price {
+      font-weight: 600;
+      font-size: 0.86em;
+      line-height: 1em;
+      opacity: 0.8;
+    }
+    .back .location {
+      grid-row: 1;
+      justify-self: start;
+    }
+    .back .price {
+      grid-row: 1;
+      justify-self: end;
+    }
+
+    /* Footer */
+    .footer-container {
+      background-color: #E6E6E6;
+      padding: 40px 20px;
+      font-family: 'Poppins', sans-serif;
+      /* ไม่กำหนด height แบบตายตัว */
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .footer-section h3 {
+      margin-bottom: 20px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    .app-downloads {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .app-downloads img {
+      height: 60px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .app-downloads img:hover {
+      transform: scale(1.05);
+    }
+    .call-center-icon img {
+      width: 60px;
+      height: auto;
+      margin-bottom: 15px;
+    }
+    .call-center-hours {
+      font-weight: 500;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #555;
+    }
+    .contact-info {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #777;
+    }
+    .social-icons {
+      display: flex;
+      gap: 20px;
+    }
+    .social-icons img {
+      width: 45px;
+      height: 45px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .social-icons img:hover {
+      transform: scale(1.1);
+    }
+    .footer-links {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: #333;
+      text-decoration: none;
+      padding: 5px 10px;
+      transition: color 0.2s;
+      font-size: 14px;
+    }
+    .footer-links a:hover {
+      color: #000;
+      text-decoration: underline;
+    }
+    .copyright {
+      margin-top: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px;
+      }
+      .nav-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+      .hover-gallery {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .immersive-gallery {
+        flex-direction: column;
+        min-height: auto;
+      }
+      .gallery-panel {
+        height: 400px;
+      }
+      .vertical-label {
+        right: 1rem;
+        transform: none;
+      }
+      .panel-content {
+        padding: 2rem;
+        transform: translateY(100%);
+      }
+      .gallery-panel:hover .panel-content {
+        transform: translateY(0);
+      }
+      .content-header h2 {
+        font-size: 2rem;
+      }
+      .content-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .section-number {
+        font-size: 3rem;
+      }
+      .interaction-hint {
+        bottom: 1rem;
+        right: 1rem;
+        transform: translateX(20px);
+      }
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .app-downloads img {
+        height: 50px;
+      }
+      .social-icons img {
+        width: 40px;
+        height: 40px;
+      }
+      /* Footer */
+    .footer-container {
+      background-color: #E6E6E6;
+      padding: 40px 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 20px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .app-downloads {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .app-downloads img {
+      height: 60px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .app-downloads img:hover {
+      transform: scale(1.05);
+    }
+
+    .call-center-icon img {
+      width: 60px;
+      height: auto;
+      margin-bottom: 15px;
+    }
+
+    .call-center-hours {
+      font-weight: 500;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .contact-info {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .social-icons img {
+      width: 45px;
+      height: 45px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .social-icons img:hover {
+      transform: scale(1.1);
+    }
+
+    .footer-links {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #333;
+      text-decoration: none;
+      padding: 5px 10px;
+      transition: color 0.2s;
+      font-size: 14px;
+    }
+
+    .footer-links a:hover {
+      color: #000;
+      text-decoration: underline;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .app-downloads img {
+        height: 50px;
+      }
+
+      .social-icons img {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="video-wrapper">
+      <div id="hero-video"></div>
+    </div>
+    <div class="overlay">
+      <img src="https://img2.pic.in.th/pic/CENFINITY-Logo_white-1.png" alt="CENFINITY Overlay Logo" class="logo"/>
+    </div>
+  </div>
+
+ <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <a href="#">
+        <img src="https://img2.pic.in.th/pic/CENFINITY-Logo_white-1.png" alt="CENFINITY Logo" />
+      </a>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="#" class="nav-link">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">About Cenfinity</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">News</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">Event &amp; Activities</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">Rewards &amp; Privileges</a>
+        <ul class="dropdown-menu">
+          <li class="dropdown-item">
+            <a href="#">Privileges_1</a>
+          </li>
+          <li class="dropdown-item">
+            <a href="#">Privileges_2</a>
+          </li>
+          <li class="dropdown-item">
+            <a href="#">XXXXX</a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link nav-sustainability">Sustainability</a>
+      </li>
+    </ul>
+    <!-- Navbar Search -->
+    <div class="navbar-search">
+      <button class="search-toggle" aria-label="Toggle Search">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 
+          1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 
+          5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+        </svg>
+      </button>
+      <input type="text" class="search-input" placeholder="Search..." aria-label="Search">
+    </div>
+  </nav>
+
+<!-- Hero Banner -->
+  <div class="hero-banner">
+    <!-- Hero Items -->
+    <div class="hero-item active" style="background-image: url('https://img5.pic.in.th/file/secure-sv1/18e1d25bbe632c58c.png');" aria-hidden="true"></div>
+    <div class="hero-item" style="background-image: url('https://img2.pic.in.th/pic/3ae1001998ba7093b.png');" aria-hidden="true"></div>
+    <div class="hero-item" style="background-image: url('https://img2.pic.in.th/pic/47b595ea7905788e4.png');" aria-hidden="true"></div>
+    <div class="hero-item" style="background-image: url('https://img5.pic.in.th/file/secure-sv1/58bc416e05df8e02a.png');" aria-hidden="true"></div>
+    <div class="hero-item" style="background-image: url('https://img2.pic.in.th/pic/669971228c81d60bb.png');" aria-hidden="true"></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+      <h2>Welcome to Our World</h2>
+      <p>Discover exclusive experiences tailored just for you.</p>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button class="arrow left" onclick="prevSlide()" aria-label="Previous Slide" tabindex="0">&#10094;</button>
+    <button class="arrow right" onclick="nextSlide()" aria-label="Next Slide" tabindex="0">&#10095;</button>
+
+    <!-- Dots -->
+    <div class="dots">
+      <span class="dot active" onclick="goToSlide(0)" tabindex="0" aria-label="Slide 1"></span>
+      <span class="dot" onclick="goToSlide(1)" tabindex="0" aria-label="Slide 2"></span>
+      <span class="dot" onclick="goToSlide(2)" tabindex="0" aria-label="Slide 3"></span>
+      <span class="dot" onclick="goToSlide(3)" tabindex="0" aria-label="Slide 4"></span>
+      <span class="dot" onclick="goToSlide(4)" tabindex="0" aria-label="Slide 5"></span>
+    </div>
+  </div>
+
+  <!-- Upcoming Events Section -->
+  <div class="section">
+    <h2>Upcoming Events</h2>
+    <div class="immersive-gallery">
+      <div class="gallery-panel">
+        <div class="panel-image" style="background-image: url('https://img2.pic.in.th/pic/event_1.png');" loading="lazy">
+          <div class="floating-elements">
+            <div class="float-circle"></div>
+            <div class="float-line"></div>
+          </div>
+        </div>
+        <div class="vertical-label">
+          <div class="label-line"></div>
+          <span>Privileges</span>
+          <div class="label-dot"></div>
+        </div>
+        <div class="panel-content">
+          <div class="content-header">
+            <span class="section-number">01</span>
+            <h2>The Privileges</h2>
+          </div>
+          <div class="content-body">
+            <p>Handpicked global renowned partners, thoughtfully crafted privileges to cater to the unique needs of our valued members.</p>
+            <div class="feature-list">
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Exclusive Access</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Premium Services</span>
+              </div>
+            </div>
+          </div>
+          <!-- ปุ่ม Explore More ชิดขวา -->
+          <div class="interaction-hint">
+            <span class="hint-text">Explore More</span>
+            <div class="hint-arrow"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-panel">
+        <div class="panel-image" style="background-image: url('https://img5.pic.in.th/file/secure-sv1/event_2.png');" loading="lazy">
+          <div class="floating-elements">
+            <div class="float-circle"></div>
+            <div class="float-line"></div>
+          </div>
+        </div>
+        <div class="vertical-label">
+          <div class="label-line"></div>
+          <span>Community</span>
+          <div class="label-dot"></div>
+        </div>
+        <div class="panel-content">
+          <div class="content-header">
+            <span class="section-number">02</span>
+            <h2>The Community</h2>
+          </div>
+          <div class="content-body">
+            <p>Join an exclusive network of visionaries and innovators. Connect, share, and grow together in our curated community.</p>
+            <div class="feature-list">
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Global Network</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Elite Events</span>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-hint">
+            <span class="hint-text">Explore More</span>
+            <div class="hint-arrow"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-panel">
+        <div class="panel-image" style="background-image: url('https://img5.pic.in.th/file/secure-sv1/event_3.png');" loading="lazy">
+          <div class="floating-elements">
+            <div class="float-circle"></div>
+            <div class="float-line"></div>
+          </div>
+        </div>
+        <div class="vertical-label">
+          <div class="label-line"></div>
+          <span>Experiences</span>
+          <div class="label-dot"></div>
+        </div>
+        <div class="panel-content">
+          <div class="content-header">
+            <span class="section-number">03</span>
+            <h2>The Experiences</h2>
+          </div>
+          <div class="content-body">
+            <p>Immerse yourself in extraordinary moments crafted for the distinguished. Every experience is a story waiting to be told.</p>
+            <div class="feature-list">
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Curated Adventures</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Luxury Escapes</span>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-hint">
+            <span class="hint-text">Explore More</span>
+            <div class="hint-arrow"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-panel">
+        <div class="panel-image" style="background-image: url('https://img2.pic.in.th/pic/event_4.png');" loading="lazy">
+          <div class="floating-elements">
+            <div class="float-circle"></div>
+            <div class="float-line"></div>
+          </div>
+        </div>
+        <div class="vertical-label">
+          <div class="label-line"></div>
+          <span>Benefits</span>
+          <div class="label-dot"></div>
+        </div>
+        <div class="panel-content">
+          <div class="content-header">
+            <span class="section-number">04</span>
+            <h2>The Benefits</h2>
+          </div>
+          <div class="content-body">
+            <p>Enjoy unparalleled advantages designed exclusively for our members. Your journey with us is filled with remarkable rewards.</p>
+            <div class="feature-list">
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Priority Access</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">✦</span>
+                <span>Exclusive Rewards</span>
+              </div>
+            </div>
+          </div>
+          <div class="interaction-hint">
+            <span class="hint-text">Explore More</span>
+            <div class="hint-arrow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Sections (Privileges Cards) -->
+  <div class="content">
+    <div class="section">
+      <h2>Privileges</h2>
+      <div class="wrapper">
+        <!-- Card 1 -->
+        <div class="card">
+          <div class="content">
+            <div class="front" style="background-image: url('https://images.unsplash.com/photo-1529408686214-b48b8532f72c?ixlib=rb-0.3.5&auto=format&fit=crop&w=1350&q=80');" loading="lazy">
+              <div class="inner">
+                <h2>Cozy apartment</h2>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <div class="back">
+              <div class="inner">
+                <div class="description">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae, accusamus.</p>
+                  <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates earum nostrum ipsam ullam, reiciendis nam consectetur? Doloribus voluptate architecto possimus perferendis tenetur nemo amet temporibus, enim soluta nam, debitis.</p>
+                </div>
+                <div class="location">Warsaw, Poland</div>
+                <div class="price">38€ / day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 2 -->
+        <div class="card">
+          <div class="content">
+            <div class="front" style="background-image: url('https://images.unsplash.com/photo-1515263487990-61b07816b324?ixlib=rb-0.3.5&auto=format&fit=crop&w=1350&q=80');" loading="lazy">
+              <div class="inner">
+                <h2>Modern flat</h2>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <div class="back">
+              <div class="inner">
+                <div class="description">
+                  <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem unde ea voluptas fuga odio vel veniam eveniet, explicabo autem earum?</p>
+                  <ul>
+                    <li>Lorem ipsum dolor sit amet.</li>
+                    <li>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</li>
+                    <li>Lorem ipsum dolor sit amet consectetur.</li>
+                    <li>Lorem ipsum dolor sit amet.</li>
+                  </ul>
+                </div>
+                <div class="location">Warsaw, Poland</div>
+                <div class="price">42€ / day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 3 -->
+        <div class="card">
+          <div class="content">
+            <div class="front" style="background-image: url('https://images.unsplash.com/photo-1529595354331-201ad3ae5e71?ixlib=rb-0.3.5&auto=format&fit=crop&w=658&q=80');" loading="lazy">
+              <div class="inner">
+                <h2>Luxury property</h2>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <div class="back">
+              <div class="inner">
+                <div class="description">
+                  <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa libero totam nostrum consequatur autem quae provident quos alias fugit maxime nisi labore, temporibus tempore illo natus voluptates aliquam ipsum officia quasi placeat aut facilis laudantium nam!</p>
+                  <p>Quam, iusto. Neque ratione ut deserunt unde dicta nesciunt, repudiandae aspernatur explicabo numquam! Tenetur!</p>
+                </div>
+                <div class="location">Cracow, Poland</div>
+                <div class="price">60€ / day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 4 -->
+        <div class="card">
+          <div class="content">
+            <div class="front" style="background-image: url('https://images.unsplash.com/photo-1529408686214-b48b8532f72c?ixlib=rb-0.3.5&auto=format&fit=crop&w=1350&q=80');" loading="lazy">
+              <div class="inner">
+                <h2>Cozy apartment</h2>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <div class="back">
+              <div class="inner">
+                <div class="description">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae, accusamus.</p>
+                  <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates earum nostrum ipsam ullam, reiciendis nam consectetur? Doloribus voluptate architecto possimus perferendis tenetur nemo amet temporibus, enim soluta nam, debitis.</p>
+                </div>
+                <div class="location">Warsaw, Poland</div>
+                <div class="price">38€ / day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 5 -->
+        <div class="card">
+          <div class="content">
+            <div class="front" style="background-image: url('https://images.unsplash.com/photo-1515263487990-61b07816b324?ixlib=rb-0.3.5&auto=format&fit=crop&w=1350&q=80');" loading="lazy">
+              <div class="inner">
+                <h2>Modern flat</h2>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <div class="back">
+              <div class="inner">
+                <div class="description">
+                  <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem unde ea voluptas fuga odio vel veniam eveniet, explicabo autem earum?</p>
+                  <ul>
+                    <li>Lorem ipsum dolor sit amet.</li>
+                    <li>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</li>
+                    <li>Lorem ipsum dolor sit amet consectetur.</li>
+                    <li>Lorem ipsum dolor sit amet.</li>
+                  </ul>
+                </div>
+                <div class="location">Warsaw, Poland</div>
+                <div class="price">42€ / day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 6 -->
+        <div class="card">
+          <div class="content">
+            <div class="front" style="background-image: url('https://images.unsplash.com/photo-1529595354331-201ad3ae5e71?ixlib=rb-0.3.5&auto=format&fit=crop&w=658&q=80');" loading="lazy">
+              <div class="inner">
+                <h2>Luxury property</h2>
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <div class="back">
+              <div class="inner">
+                <div class="description">
+                  <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa libero totam nostrum consequatur autem quae provident quos alias fugit maxime nisi labore, temporibus tempore illo natus voluptates aliquam ipsum officia quasi placeat aut facilis laudantium nam!</p>
+                  <p>Quam, iusto. Neque ratione ut deserunt unde dicta nesciunt, repudiandae aspernatur explicabo numquam! Tenetur!</p>
+                </div>
+                <div class="location">Cracow, Poland</div>
+                <div class="price">60€ / day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Footer -->
+  <footer class="footer-container">
+    <div class="footer-content">
+      <!-- Download the App Section -->
+      <div class="footer-section">
+        <h3>DOWNLOAD THE APP</h3>
+        <div class="app-downloads">
+          <img src="https://img2.pic.in.th/pic/App-store.png" alt="Download on App Store">
+          <img src="https://img5.pic.in.th/file/secure-sv1/Google-Play.png" alt="Get it on Google Play">
+        </div>
+      </div>
+      <!-- Call Center Section -->
+      <div class="footer-section">
+        <h3>CENFINITY CALL CENTER</h3>
+        <div class="call-center-icon">
+          <img src="https://img2.pic.in.th/pic/Call-center.png" alt="Call Center Icon">
+        </div>
+        <div>Available Daily</div>
+        <div class="call-center-hours">09:00 AM - 22:00 PM</div>
+        <div class="contact-info">cenfinitycallcenter@central.co.th</div>
+        <div class="contact-info">+66 (2) 793 7733</div>
+      </div>
+      <!-- Follow Us Section -->
+      <div class="footer-section">
+        <h3>FOLLOW US ON</h3>
+        <div class="social-icons">
+          <img src="https://img2.pic.in.th/pic/IG4dd5b441fd9da10d.png" alt="Instagram">
+          <img src="https://img5.pic.in.th/file/secure-sv1/Line8c91108703c1ab30.png" alt="Line">
+        </div>
+      </div>
+    </div>
+    <!-- Footer Links -->
+    <div class="footer-links">
+      <a href="#home">Home</a>
+      <a href="#about-cenfinity">About Cenfinity</a>
+      <a href="#news">News</a>
+      <a href="#events">Event & Activities</a>
+      <a href="#rewards">Rewards & Privileges</a>
+      <a href="#sustainability">Sustainability</a>
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#cookie">Cookie Policy</a>
+      <a href="#faqs">FAQs</a>
+      <a href="#contact">Contact Us</a>
+    </div>
+    <!-- Copyright -->
+    <div class="copyright">
+      © 2025 CENFINITY. All Rights Reserved.
+    </div>
+  </footer>
+
+   <!-- Scripts -->
+  <script>
+    // Navbar scroll effect
+    window.addEventListener("scroll", function() {
+      var navbar = document.querySelector(".navbar");
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    });
+
+    // Hero Banner Slider
+    const heroItems = document.querySelectorAll('.hero-item');
+    const dots = document.querySelectorAll('.dot');
+    let currentIndex = 0;
+    let autoSlideInterval;
+
+    function showSlide(index) {
+      heroItems.forEach((item, i) => {
+        item.classList.remove('active');
+        dots[i].classList.remove('active');
+      });
+      heroItems[index].classList.add('active');
+      dots[index].classList.add('active');
+      currentIndex = index;
+    }
+
+    function nextSlide() {
+      let nextIndex = (currentIndex + 1) % heroItems.length;
+      showSlide(nextIndex);
+    }
+
+    function prevSlide() {
+      let prevIndex = (currentIndex - 1 + heroItems.length) % heroItems.length;
+      showSlide(prevIndex);
+    }
+
+    function goToSlide(index) {
+      showSlide(index);
+    }
+
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function stopAutoSlide() {
+      clearInterval(autoSlideInterval);
+    }
+
+    // Initialize slider
+    showSlide(0);
+    startAutoSlide();
+
+    const heroBanner = document.querySelector('.hero-banner');
+    heroBanner.addEventListener('mouseenter', stopAutoSlide);
+    heroBanner.addEventListener('mouseleave', startAutoSlide);
+
+    // Card flip
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          card.classList.toggle('flipped');
+        });
+      });
+    });
+
+    // Search toggle
+    document.querySelector('.search-toggle').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.querySelector('.navbar-search').classList.toggle('active');
+      const searchInput = document.querySelector('.search-input');
+      if (document.querySelector('.navbar-search').classList.contains('active')) {
+        searchInput.style.width = '200px';
+        searchInput.style.opacity = '1';
+        searchInput.style.backgroundColor = 'white';
+        searchInput.focus();
+      } else {
+        searchInput.style.width = '0';
+        searchInput.style.opacity = '0';
+        searchInput.style.backgroundColor = 'transparent';
+      }
+    });
+
+    document.querySelector('.search-input').addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function(e) {
+      const searchContainer = document.querySelector('.navbar-search');
+      if (!searchContainer.contains(e.target)) {
+        searchContainer.classList.remove('active');
+        const searchInput = document.querySelector('.search-input');
+        searchInput.style.width = '0';
+        searchInput.style.opacity = '0';
+        searchInput.style.backgroundColor = 'transparent';
+      }
+    });
+
+    // YouTube Player (ถ้าต้องการใช้พื้นหลังวิดีโอ)
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('hero-video', {
+        videoId: 'QZyB5q-7_BU',
+        playerVars: {
+          'autoplay': 1,
+          'controls': 0,
+          'showinfo': 0,
+          'modestbranding': 1,
+          'loop': 1,
+          'playlist': 'QZyB5q-7_BU',
+          'mute': 1,
+          'playsinline': 1,
+          'rel': 0,
+          'enablejsapi': 1,
+          'origin': window.location.origin,
+          'widget_referrer': window.location.href,
+          'start': 0
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange,
+          'onError': onPlayerError
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      event.target.playVideo();
+      event.target.setPlaybackQuality('hd1080');
+      event.target.mute();
+    }
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED) {
+        player.playVideo();
+      }
+      if (event.data === YT.PlayerState.PAUSED) {
+        player.playVideo();
+      }
+    }
+    function onPlayerError(event) {
+      console.error('YouTube Player Error:', event.data);
+      setTimeout(() => {
+        player.playVideo();
+      }, 3000);
+    }
+    document.addEventListener('visibilitychange', function() {
+      if (player && typeof player.playVideo === 'function') {
+        if (document.hidden) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      }
+    });
+    window.addEventListener('blur', function() {
+      if (player && typeof player.pauseVideo === 'function') {
+        player.pauseVideo();
+      }
+    });
+    window.addEventListener('focus', function() {
+      if (player && typeof player.playVideo === 'function') {
+        player.playVideo();
+      }
+    });
+    setInterval(() => {
+      if (player && typeof player.getPlayerState === 'function') {
+        const state = player.getPlayerState();
+        if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
+          player.playVideo();
+        }
+      }
+    }, 5000);
+    
+  </script>
+</body>
+</html>
